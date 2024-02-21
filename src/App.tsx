@@ -5,6 +5,7 @@ import SignupForm from './authentication/forms/SignupForm'
 import Home from './main/pages/Home'
 import AuthLayout from './authentication/AuthLayout'
 import MainLayout from './main/MainLayout'
+import { Toaster } from "@/components/ui/toaster"
 
 const App = () => {
   return (
@@ -22,7 +23,7 @@ const App = () => {
         
         <Route />
       </Routes>
-
+      <Toaster />
     </main>
   )
 }
