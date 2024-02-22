@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import {Form,FormControl,FormField,FormItem,FormLabel,FormMessage} from "@/components/ui/form"
 import { signinValidation } from "@/lib/validation"
-import Loader from "@/components/ui/global components/Loader"
+import Loader from "@/components/ui/global-components/Loader"
 import { Link, useNavigate } from "react-router-dom"
 import { useToast } from "@/components/ui/use-toast"
 import {  useSignInAccount } from "@/lib/react-query/queriesAndMutations"
@@ -14,10 +14,10 @@ import { useUserContext } from "@/context/AuthContext"
 
 const SigninForm = () => {
   const { toast } = useToast()
-  const { checkAuthUser, isLoading: isUserLoading} = useUserContext()
+  const { checkAuthUser} = useUserContext()
   const navigate = useNavigate()
 
-  const{ mutateAsync: signInAccount} = useSignInAccount()
+  const{ mutateAsync: signInAccount, isPending: isSigningIn} = useSignInAccount()
    // 1. Define your form.
    const form = useForm<z.infer<typeof signinValidation>>({
     resolver: zodResolver(signinValidation),
@@ -56,7 +56,7 @@ const SigninForm = () => {
   return (
     <Form {...form}>
       <div className="smLw-420 flex-center flex-col">
-        <img src="logo" alt="logo" />
+        <img src="assets/logo.png" width={200} height={150} alt="logo" />
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">Log in to your account</h2>
         <p className="text-light-3 small-medium md:base-regular">Welcome back! Please enter your details </p>
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4">
@@ -87,10 +87,10 @@ const SigninForm = () => {
         )}
       />
       <Button className="shad-button_primary" type="submit">
-        {isUserLoading ?
+        {isSigningIn ?
         <div className="flex-center gap-2">
           <Loader />
-        </div> : 'Sign ip'
+        </div> : 'Sign in'
         }
         </Button>
         <p className="text-small-regular text-light-2 text-center mt-2">
