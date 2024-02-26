@@ -12,14 +12,20 @@ import { Models } from "appwrite"
 import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../use-toast"
 import { useNavigate } from "react-router-dom"
-import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
+import Loader from "../global-components/Loader"
 
 type PostFormProps = {
-  post? : Models.Document
+  post? : Models.Document;
+  action:'Create' | 'Update'
 }
  
-const PostForm = ({ post } : PostFormProps) => {
+const PostForm = ({ post,action } : PostFormProps) => {
     const { mutateAsync: createPost, isPending: isCreatingPost} = useCreatePost()
+    const { mutateAsync: updatePost, isPending: isUpdating} = useUpdatePost()
+
+
+
     const { user } = useUserContext()
     const { toast } = useToast()
     const navigate = useNavigate()
@@ -37,16 +43,33 @@ const PostForm = ({ post } : PostFormProps) => {
    
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof postValidation>) {
+      if(post && action === 'Update'){
+        const updatedPost = await updatePost({
+          ...values,
+          postId: post.$id,
+          imageId: post?.imageId,
+          imageUrl: post?.imageUrl,
+        })
+      if(!updatedPost){
+        toast({title: 'Error Updating post, Please try again later'})
+      }
+      return navigate(`/posts/${post.$id}`)
+    }
       const newPost = await createPost({...values, userId: user.id
       })
       if(!newPost) {
         toast({
           title: 'Error creating post, Please try again later'
         })
+
       }
       if(newPost){
         navigate('/')
       }
+    }
+
+    const handleCanclerButton = () => {
+      navigate('/')
     }
   
   return (
@@ -120,8 +143,10 @@ const PostForm = ({ post } : PostFormProps) => {
         )}
       />
       <div className="flex gap-4 items-center justify-end">
-      <Button type="button" className="shad-button_dark_4">Cancel</Button>
-      <Button type="submit" className="shad-button_primary whitespace-nowrap">Submit</Button>
+      <Button type="button" className="shad-button_dark_4" onClick={handleCanclerButton}>Cancel</Button>
+      <Button type="submit" className="shad-button_primary whitespace-nowrap"
+      disabled={isUpdating || isCreatingPost}
+      >{isCreatingPost || isUpdating && <Loader />}{action} Post</Button>
       </div>
     </form>
   </Form>
