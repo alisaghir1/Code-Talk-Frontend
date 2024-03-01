@@ -33,7 +33,6 @@ const GridPostList = ({ posts, showUser = true, showStats = true  }: GridPostLis
                 </p>
               </div>
             )}
-            {showStats && <PostStats post={post} userId={user.id} />}
           </div>
 
         </li>

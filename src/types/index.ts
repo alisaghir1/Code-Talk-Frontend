@@ -57,6 +57,12 @@ export type INavLink = {
     username: string;
     password: string;
   };
+
+  export type INewComment = {
+    postId: string;
+    userId: string;
+    commentContent: string;
+  };
   
   useDebounce.ts
   import { useEffect, useState } from "react";

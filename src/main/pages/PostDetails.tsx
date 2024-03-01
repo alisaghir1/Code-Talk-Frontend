@@ -18,8 +18,9 @@ const PostDetails = () => {
     navigate(-1);
   };
 
+
   return (
-    <div className="post_details-container">
+    <div className="post_details-container">    
       {isPending ? (
         <Loader />
       ) : (
@@ -97,15 +98,38 @@ const PostDetails = () => {
                   </li>
                 ))}
               </ul>
+              
             </div>
+            
 
             <div className="w-full">
               <PostStats post={post} userId={user.id}/>
+              <div className="post_comments-section">
+            <h3 className="post_comments-heading mb-20">Comments</h3>
+            {post?.comment.map((comment: any) => (
+              <div key={comment.$id} className="post_comment">
+                <div className="post_comment-user">
+                  <img
+                    className="post_comment-avatar"
+                    src={comment.author.imageUrl}
+                    alt={comment.author.username}
+                  />
+                  <span className="post_comment-username">
+                    {comment.author.username}
+                  </span>
+                </div>
+                <p className="post_comment-text">{comment.content}</p>
+              </div>
+            ))}
+          </div>
             </div>
 
           </div>
+          
         </div>
+        
       )}
+      
     </div>
   );
 };

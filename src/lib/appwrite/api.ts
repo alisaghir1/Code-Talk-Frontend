@@ -1,4 +1,4 @@
-import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
+import { INewComment, INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { ID, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
@@ -444,5 +444,65 @@ export async function getUsers(limit?: number) {
     return users;
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function addComment({ postId, userId, commentContent }: INewComment) {
+  try {
+    // First, create the comment object to be added
+    const comment = {
+      content: commentContent,
+      author: userId,
+      post: postId,
+    };
+
+    // Now, add the comment to the comments collection in your database
+    const newComment = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentsCollectionId,
+      ID.unique(),
+      comment
+    );
+
+    if (!newComment) {
+      throw new Error("Failed to add comment");
+    }
+
+    // Next, update the post with the new comment
+    const post = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postsCollectionId,
+      postId
+    );
+
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    let updatedComments = [];
+    if (post.comment && Array.isArray(post.comment)) {
+      updatedComments = [...post.comment, newComment.$id];
+    } else {
+      updatedComments = [newComment.$id];
+    }
+
+    // Update the post with the new comment
+    const updatedPost = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postsCollectionId,
+      postId,
+      {
+        comment: updatedComments,
+      }
+    );
+
+    if (!updatedPost) {
+      throw new Error("Failed to update post with comment");
+    }
+
+    return newComment;
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    throw error;
   }
 }

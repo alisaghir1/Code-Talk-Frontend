@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery} from '@tanstack/react-query'
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
-import { INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery, QueryCache} from '@tanstack/react-query'
+import { addComment, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
+import { INewComment, INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
 import { QUERY_KEYS } from './queryKeys'
 
 
@@ -201,3 +201,14 @@ export const useGetUserById = (userId: string) => {
       queryFn: () => getUsers(limit),
     });
   };
+
+  export const useAddComment = () => {
+    return useMutation({
+        mutationFn: (data: INewComment) => addComment(data), onSuccess: () => {
+            const queryClient = useQueryClient()
+            queryClient.invalidateQueries({
+                queryKey:[QUERY_KEYS.GET_COMMENTS]
+            });
+          },
+    })
+}
