@@ -1,5 +1,3 @@
-const htmlContent = `
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -10,6 +8,3 @@ const htmlContent = `
   <script src="bundle.js"></script>
 </body>
 </html>
-`;
-
-document.write(htmlContent);
