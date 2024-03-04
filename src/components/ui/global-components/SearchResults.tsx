@@ -1,11 +1,10 @@
-import { Models } from "appwrite";
 import Loader from "./Loader";
 import GridPostList from "./GridPostList";
 
 
 type SearchResultsProps ={
   isSearching: boolean;
-  searchPosts: Models.Document[]
+  searchPosts: any
 }
 
 const SearchResults = ({isSearching, searchPosts}: SearchResultsProps) => {
