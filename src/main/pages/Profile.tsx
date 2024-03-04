@@ -15,6 +15,8 @@ import {
 import LikedPosts from "./LikedPosts";
 import { addUser, removeUser } from "@/lib/appwrite/api";
 import { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
+import { title } from "process";
 
 
 
@@ -64,7 +66,9 @@ const Profile = () => {
         console.error('Error adding user:', error);
       } finally {
         setLoading(false)
+        toast({ title: `${currentUser.name} has been Added`})
         navigate('/')
+
       }
     };
 
@@ -81,6 +85,7 @@ const Profile = () => {
         console.error('Error removing user:', error);
       } finally {
         setLoading(false)
+        toast({ title: `${currentUser.name} is removed from your connections`})
         navigate('/')
       }
     };
