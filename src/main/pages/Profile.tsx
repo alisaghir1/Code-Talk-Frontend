@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import GridPostList from "@/components/ui/global-components/GridPostList";
 import Loader from "@/components/ui/global-components/Loader";
 import { useUserContext } from "@/context/AuthContext";
-import { useAddUser, useGetUserById } from "@/lib/react-query/queriesAndMutations";
+import { useGetUserById } from "@/lib/react-query/queriesAndMutations";
 import {
   Route,
   Routes,
@@ -16,7 +16,6 @@ import LikedPosts from "./LikedPosts";
 import { addUser, removeUser } from "@/lib/appwrite/api";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { title } from "process";
 
 
 
