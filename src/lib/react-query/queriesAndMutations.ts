@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery, QueryCache} from '@tanstack/react-query'
-import { addComment, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
-import { INewComment, INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
+import { addComment, addUser, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
+import { INewComment, INewPost, INewUser, IUpdatePost, IUpdateUser, IUser } from '@/types'
 import { QUERY_KEYS } from './queryKeys'
 
 
@@ -212,3 +212,16 @@ export const useGetUserById = (userId: string) => {
           },
     })
 }
+
+export const useAddUser = () => {
+    return useMutation({
+      mutationFn: async (data: { currentUser: string, newConnectionId: string }) => {
+        try {
+          const response = await addUser(data.currentUser, data.newConnectionId);
+          return response;
+        } catch (error) {
+          throw new Error('Error adding user');
+        }
+      },
+    });
+  };

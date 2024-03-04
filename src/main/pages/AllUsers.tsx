@@ -1,18 +1,22 @@
 import Loader from "@/components/ui/global-components/Loader";
 import UserCard from "@/components/ui/global-components/UseCard";
 import { useToast } from "@/components/ui/use-toast";
+import { useUserContext } from "@/context/AuthContext";
 import { useGetUsers } from "@/lib/react-query/queriesAndMutations";
 
 const AllUsers = () => {
   const { toast } = useToast();
 
   const { data: creators, isLoading, isError: isErrorCreators } = useGetUsers();
+  const { user } = useUserContext()
 
   if (isErrorCreators) {
     toast({ title: "Something went wrong." });
     
     return;
   }
+
+
 
   return (
     <div className="common-container">
@@ -22,12 +26,15 @@ const AllUsers = () => {
           <Loader />
         ) : (
           <ul className="user-grid">
-            {creators?.documents.map((creator) => (
-              <li key={creator?.$id} className="flex-1 min-w-[200px] w-full  ">
+          {creators?.documents
+            .filter((creator) => creator?.$id !== user?.id)
+            .map((creator) => (
+              <li key={creator?.$id} className="flex-1 min-w-[200px] w-full">
                 <UserCard user={creator} />
               </li>
             ))}
-          </ul>
+
+        </ul>
         )}
       </div>
     </div>

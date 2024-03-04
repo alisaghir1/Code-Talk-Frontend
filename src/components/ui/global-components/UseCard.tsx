@@ -2,12 +2,16 @@ import { Models } from "appwrite";
 import { Link } from "react-router-dom";
 import { Button } from "../button";
 
-
 type UserCardProps = {
   user: Models.Document;
 };
 
+
+
 const UserCard = ({ user }: UserCardProps) => {
+
+
+
   return (
     <Link to={`/profile/${user.$id}`} className="user-card">
       <img
@@ -24,8 +28,10 @@ const UserCard = ({ user }: UserCardProps) => {
           @{user.username}
         </p>
       </div>
+      {/* <Button type="button" size="sm" className="shad-button_primary px-5">
+        Connect
+      </Button> */}
 
-  
     </Link>
   );
 };

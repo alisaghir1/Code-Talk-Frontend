@@ -49,6 +49,7 @@ export type INavLink = {
     email: string;
     imageUrl: string;
     bio: string;
+    connections: string[]
   };
   
   export type INewUser = {
@@ -63,6 +64,7 @@ export type INavLink = {
     userId: string;
     commentContent: string;
   };
+
   
   useDebounce.ts
   import { useEffect, useState } from "react";

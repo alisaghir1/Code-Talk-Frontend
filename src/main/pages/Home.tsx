@@ -1,13 +1,14 @@
 import Loader from "@/components/ui/global-components/Loader";
 import PostCard from "@/components/ui/global-components/PostCard";
 import UserCard from "@/components/ui/global-components/UseCard";
+import { useUserContext } from "@/context/AuthContext";
 import { useGetRecentPosts, useGetUsers } from "@/lib/react-query/queriesAndMutations";
 import { Models } from "appwrite";
 
 // import { useToast } from "@/components/ui/use-toast";
 
 const Home = () => {
-  // const { toast } = useToast();
+  const {user} = useUserContext()
 
   const {
     data: posts,
@@ -58,10 +59,12 @@ const Home = () => {
           <Loader />
         ) : (
           <ul className="grid 2xl:grid-cols-2 gap-6">
-            {creators?.documents.map((creator) => (
-              <li key={creator?.$id}>
-                <UserCard user={creator} />
-              </li>
+             {creators?.documents
+              .filter((creator) => creator?.$id !== user.id)
+              .map((creator) => (
+                <li key={creator?.$id} className="flex-1 min-w-[200px] w-full">
+                  <UserCard user={creator} />
+                </li>
             ))}
           </ul>
         )}

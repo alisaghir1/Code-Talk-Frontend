@@ -506,3 +506,128 @@ export async function addComment({ postId, userId, commentContent }: INewComment
     throw error;
   }
 }
+
+
+export async function addUser(currentUser: string, newConnectionId: string) {
+  try {
+    // Get the current user
+    const user: any = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      currentUser
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Update the current user's connections array
+    const updatedConnectionsCurrentUser = [...user.connections, newConnectionId];
+
+    // Update the current user's document with the new connections
+    const responseCurrentUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      currentUser,
+      {
+        connections: updatedConnectionsCurrentUser,
+      }
+    );
+    console.log('Connection added successfully for current user:', responseCurrentUser);
+
+    // Get the new connection's user
+    const newConnectionUser: any = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      newConnectionId
+    );
+
+    if (!newConnectionUser) {
+      throw new Error('New connection user not found');
+    }
+
+    // Update the new connection's user's connections array
+    const updatedConnectionsNewConnectionUser = [...newConnectionUser.connections, currentUser];
+
+    // Update the new connection's user's document with the new connections
+    const responseNewConnectionUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      newConnectionId,
+      {
+        connections: updatedConnectionsNewConnectionUser,
+      }
+    );
+    console.log('Connection added successfully for new connection user:', responseNewConnectionUser);
+
+    // Return the updated connections for the current user
+    return responseCurrentUser;
+  } catch (error) {
+    console.error('Error adding connection:', error);
+    throw new Error('Error adding connection');
+  }
+}
+
+export async function removeUser(currentUser: string, connectionToRemove: string) {
+  try {
+    // Get the current user
+    const user: any = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      currentUser
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Update the current user's connections array
+    const updatedConnectionsCurrentUser = user.connections.filter(
+      (connectionId: string) => connectionId !== connectionToRemove
+    );
+
+    // Update the current user's document with the new connections
+    const responseCurrentUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      currentUser,
+      {
+        connections: updatedConnectionsCurrentUser,
+      }
+    );
+    console.log('Connection removed successfully for current user:', responseCurrentUser);
+
+    // Get the user to remove connection from
+    const connectionToRemoveUser: any = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      connectionToRemove
+    );
+
+    if (!connectionToRemoveUser) {
+      throw new Error('Connection to remove user not found');
+    }
+
+    // Update the connection to remove user's connections array
+    const updatedConnectionsToRemoveUser = connectionToRemoveUser.connections.filter(
+      (connectionId: string) => connectionId !== currentUser
+    );
+
+    // Update the connection to remove user's document with the new connections
+    const responseToRemoveUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      connectionToRemove,
+      {
+        connections: updatedConnectionsToRemoveUser,
+      }
+    );
+    console.log('Connection removed successfully for connection to remove user:', responseToRemoveUser);
+
+    // Return the updated connections for the current user
+    return responseCurrentUser;
+  } catch (error) {
+    console.error('Error removing connection:', error);
+    throw new Error('Error removing connection');
+  }
+}
